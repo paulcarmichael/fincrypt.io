@@ -1,0 +1,21 @@
+<html>
+    <head>
+    <title>AES</title>
+    </head>
+    <body>
+        <form action="/aes" method="post">
+            <input type="radio" name="mode" value="encrypt" checked>Encrypt
+            <br>
+            <input type="radio" name="mode" value="decrypt">Decrypt
+            <p></p>
+            Key:<input type="text" name="key" value={{.Key}}>
+            <p></p>
+            Data:<input type="text" name="data" value={{.Data}}> 
+            <p></p>
+            IV:<input type="text" name="iv" value={{.IV}}> 
+            <p></p>
+            <input type="submit" value="AES">
+        </form>
+        Result:<input type="text" name="result" value={{.Result}}>
+    </body>
+</html>
