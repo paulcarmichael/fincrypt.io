@@ -12,7 +12,7 @@ import (
 
 func index(w http.ResponseWriter, r *http.Request) {
 
-	t, _ := template.ParseFiles("/mnt/c/Users/Paul/go/src/github.com/paulcarmichael/fincrypt/html/index.html")
+	t, _ := template.ParseFiles("C:\\Users\\Paul\\go\\src\\github.com\\paulcarmichael\\fincrypt\\html\\index.html")
 
 	t.Execute(w, nil)
 }
@@ -27,7 +27,7 @@ func xor(w http.ResponseWriter, r *http.Request) {
 
 	// if the method is GET then we have a request for the xor page
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("/mnt/c/Users/Paul/go/src/github.com/paulcarmichael/fincrypt/html/xor.html")
+		t, _ := template.ParseFiles("C:\\Users\\Paul\\go\\src\\github.com\\paulcarmichael\\fincrypt\\html\\xor.html")
 
 		t.Execute(w, nil)
 	} else {
@@ -69,7 +69,7 @@ func xor(w http.ResponseWriter, r *http.Request) {
 		log.Print("xor result [" + xorResult.Result + "]")
 
 		// generate the response
-		t, _ := template.ParseFiles("/mnt/c/Users/Paul/go/src/github.com/paulcarmichael/fincrypt/html/xor.html")
+		t, _ := template.ParseFiles("C:\\Users\\Paul\\go\\src\\github.com\\paulcarmichael\\fincrypt\\html\\xor.html")
 
 		t.Execute(w, xorResult)
 	}
@@ -86,7 +86,7 @@ func aes(w http.ResponseWriter, r *http.Request) {
 
 	// if the method is GET then we have a request for the aes page
 	if r.Method == "GET" {
-		t, _ := template.ParseFiles("/mnt/c/Users/Paul/go/src/github.com/paulcarmichael/fincrypt/html/aes.html")
+		t, _ := template.ParseFiles("C:\\Users\\Paul\\go\\src\\github.com\\paulcarmichael\\fincrypt\\html\\aes.html")
 
 		t.Execute(w, nil)
 	} else {
@@ -145,7 +145,7 @@ func aes(w http.ResponseWriter, r *http.Request) {
 		log.Print("aes result [" + aesResult.Result + "]")
 
 		// generate the response
-		t, _ := template.ParseFiles("/mnt/c/Users/Paul/go/src/github.com/paulcarmichael/fincrypt/html/aes.html")
+		t, _ := template.ParseFiles("C:\\Users\\Paul\\go\\src\\github.com\\paulcarmichael\\fincrypt\\html\\aes.html")
 
 		t.Execute(w, aesResult)
 	}
