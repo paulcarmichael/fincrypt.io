@@ -3,13 +3,15 @@
     <title>XOR</title>
     </head>
     <body>
-        <form action="/xor" method="post">
-            Input 1:<input type="text" name="input1" value={{.Input1}}>
+        <form>
+            Input 1:<input id="input1" type="text" value="1234">
             <p></p>
-            Input 2:<input type="text" name="input2" value={{.Input2}}> 
+            Input 2:<input id="input2" type="text" value="ABCD"> 
             <p></p>
-            <input type="submit" value="XOR">
+            <button id="xor">
+                XOR
+            </button>
         </form>
-        Result:<input type="text" name="result" value={{.Result}}>
+        Result:<input id="result" type="text">
     </body>
 </html>
