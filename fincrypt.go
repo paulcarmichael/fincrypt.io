@@ -13,10 +13,10 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	// build the string of the template we require based on the request URL
 	var buffer bytes.Buffer
 
-	buffer.WriteString("../src/github.com/paulcarmichael/fincrypt/html/")
+	buffer.WriteString("../src/github.com/paulcarmichael/fincrypt/html")
 
 	if r.URL.String() == "/" {
-		buffer.WriteString("index")
+		buffer.WriteString("/index")
 	} else {
 		buffer.WriteString(r.URL.String())
 	}
@@ -89,7 +89,7 @@ func main() {
 	http.HandleFunc("/", serve)
 	http.HandleFunc("/favicon.ico", faviconHandler)
 
-	// go to work!
+	// serve up some web pages
 	err = http.ListenAndServe(":8080", nil)
 
 	if err != nil {

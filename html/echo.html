@@ -1,0 +1,89 @@
+<html>
+    <head>
+        <script>
+            window.addEventListener("load", function(ev) {
+                var output = document.getElementById("output");
+                var input = document.getElementById("input");
+                var ws = null;
+
+                var print = function(message) {
+                    var div = document.createElement("div");
+                    div.innerHTML = message;
+                    output.appendChild(div);
+                };
+
+                document.getElementById("open").onclick = function(ev) {
+                    if (ws != null) {
+                        return false;
+                    }
+
+                    ws = new WebSocket("ws://localhost:8081/echo");
+
+                    ws.onopen = function(ev) {
+                        print("OPEN!");
+                    }
+
+                    ws.onclose = function(ev) {
+                        print("CLOSED!");
+                        ws.close();
+                        ws = null;
+                    }
+
+                    ws.onmessage = function(ev) {
+                        print("RESPONSE: " + ev.data);
+                    }
+
+                    ws.onerror = function(ev) {
+                        print("ERROR:" + ev.data);
+                    }
+
+                    return false;
+                };
+
+                document.getElementById("send").onclick = function(ev) {
+                    if (ws == null) {
+                        return false;
+                    }
+
+                    print("SEND: " + input.value);
+                    ws.send(input.value);
+                    return false;                    
+                };
+
+                document.getElementById("close").onclick = function(ev) {
+                    if (ws == null) {
+                        return false;
+                    }
+
+                    ws.close();
+
+                    return false;
+                };
+            });
+        </script>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td valign="top" width="50%">
+                    <p>
+                    Click "open" to create a connection to the server,
+                    "send" to send a message to the service, "close" to 
+                    close the connection. You can change the message and
+                    send multiple times.
+                    <p>
+                    <form>
+                        <button id="open">open</button>
+                        <button id="close">close</button>
+                        <p>
+                        <input id="input" type="text" value="Hello World!">
+                        <button id="send">send</button>
+                    </form>
+                </td>
+                <td valign="top" width="50%">
+                    <div id="output"></div>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
