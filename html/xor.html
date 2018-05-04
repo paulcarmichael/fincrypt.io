@@ -1,16 +1,60 @@
 <html>
     <head>
-    <title>XOR</title>
+        <title>XOR</title>
+        <script>
+            window.addEventListener("load", function(evt) {
+                var ws = null;
+
+                ws = new WebSocket("ws://localhost:8081/xor");
+
+                ws.onopen = function(evt) {
+                    console.log("WebSocket connected!");
+                }
+
+                ws.onclose = function(evt) {
+                    ws.close();
+                    ws = null;
+                    console.log("WebSocket closed!");
+                }
+
+                ws.onerror = function(evt) {
+                    console.log("Error: " + evt.data);
+                }
+
+                ws.onmessage = function(evt) {
+                    console.log("Response: " + evt.data);
+
+                    var object = JSON.parse(evt.data)
+
+                    document.getElementById("result").value = object.Res;
+                }
+
+                document.getElementById("xor").onclick = function(evt) {
+                    if (ws == null) {
+                        console.log("WebSocket not connected!");
+                        return false;
+                    }
+
+                    var object = {"Input1":document.getElementById("input1").value,
+                                  "Input2":document.getElementById("input2").value};
+
+                    var json = JSON.stringify(object);
+
+                    ws.send(json);
+                    console.log("Sent: " + json);
+
+                    return false;
+                };
+            });
+        </script>
     </head>
     <body>
         <form>
             Input 1:<input id="input1" type="text" value="1234">
-            <p></p>
+            <p>
             Input 2:<input id="input2" type="text" value="ABCD"> 
-            <p></p>
-            <button id="xor">
-                XOR
-            </button>
+            <p>
+            <button id="xor">XOR</button>
         </form>
         Result:<input id="result" type="text">
     </body>

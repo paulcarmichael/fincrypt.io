@@ -10,7 +10,7 @@ import (
 )
 
 func serve(w http.ResponseWriter, r *http.Request) {
-	// build the string of the template we require based on the request URL
+	// build the file path of the template we require based on the request URL
 	var buffer bytes.Buffer
 
 	buffer.WriteString("../src/github.com/paulcarmichael/fincrypt/html")
@@ -61,6 +61,7 @@ func faviconHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal("Abs: ", err)
 	}
 
+	// check that the favicon file exists
 	_, err = os.Stat(file)
 
 	if err != nil {

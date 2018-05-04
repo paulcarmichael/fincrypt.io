@@ -1,21 +1,73 @@
 <html>
     <head>
-    <title>AES</title>
+        <title>AES</title>
+        <script>
+            window.addEventListener("load", function(evt) {
+                var ws = null;
+
+                ws = new WebSocket("ws://localhost:8081/aes");
+
+                ws.onopen = function(evt) {
+                    console.log("WebSocket connected!");
+                }
+
+                ws.onclose = function(evt) {
+                    ws.close();
+                    ws = null;
+                    console.log("WebSocket closed!");
+                }
+
+                ws.onerror = function(evt) {
+                    console.log("Error: " + evt.data);
+                }
+
+                ws.onmessage = function(evt) {
+                    console.log("Response: " + evt.data);
+
+                    var obj = JSON.parse(evt.data)
+
+                    document.getElementById("result").value = obj.Res;
+                }
+
+                document.getElementById("aes").onclick = function(evt) {
+                    if (ws == null) {
+                        console.log("WebSocket not connected!");
+                        return false;
+                    }
+
+                    var obj = {"Mode":0,
+                               "Key":document.getElementById("key").value,
+                               "Data":document.getElementById("data").value,
+                               "IV":document.getElementById("iv").value};
+
+                    if (document.getElementById("dec").checked) {
+                        obj.Mode = 1;
+                    }
+
+                    var json = JSON.stringify(obj);
+
+                    ws.send(json);
+                    console.log("Sent: " + json);
+
+                    return false;
+                };
+            });
+        </script>
     </head>
     <body>
-        <form action="/aes" method="post">
-            <input type="radio" name="mode" value="encrypt" checked>Encrypt
-            <br>
-            <input type="radio" name="mode" value="decrypt">Decrypt
-            <p></p>
-            Key:<input type="text" name="key" value={{.Key}}>
-            <p></p>
-            Data:<input type="text" name="data" value={{.Data}}> 
-            <p></p>
-            IV:<input type="text" name="iv" value={{.IV}}> 
-            <p></p>
-            <input type="submit" value="AES">
+        <form>
+            <input id="enc" type="radio" name="mode" checked>Encrypt
+            <p>
+            <input id="dec" type="radio" name="mode">Decrypt
+            <p>
+            Key:<input id="key" type="text" value="1234567890ABCDEF1234567890ABCDEF">
+            <p>
+            Data:<input id="data" type="text" value="FEDCBA0987654321FEDCBA0987654321"> 
+            <p>
+            IV:<input id="iv" type="text" value="00000000000000000000000000000000"> 
+            <p>
+            <button id="aes">AES<button>
         </form>
-        Result:<input type="text" name="result" value={{.Result}}>
+        Result:<input id="result" type="text">
     </body>
 </html>
