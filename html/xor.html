@@ -1,7 +1,95 @@
-<html>
+<!doctype html>
+<html lang="en">
     <head>
-        <title>XOR</title>
-        <script>
+        <title>fincrypt: XOR</title>
+
+        <!-- required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+        <!-- fontawesome icons -->
+        <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/solid.css" integrity="sha384-VGP9aw4WtGH/uPAOseYxZ+Vz/vaTb1ehm1bwx92Fm8dTrE+3boLfF1SpAtB1z7HW" crossorigin="anonymous"> -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.7/css/all.css">
+
+        <!-- Roboto Mono font -->
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+        <!-- super stylin' -->
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <!-- navbar -->
+        <nav class="navbar navbar-expand-sm navbar-dark bg-dark pt-0 pb-0 shadow-sm">
+            <a class="navbar-brand" href="/">fincrypt</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="container-fluid pt-2 ml-2">
+            <div class="row">
+                <!-- sidebar -->
+                <div class="col-2 border border-dark rounded mr-2 pt-1">
+                    <ul>
+                        <li>Ciphers</li>
+                        <ul>
+                            <li>DES</li>
+                            <li><a href="http://localhost:8080/aes">AES</a></li>
+                        </ul>
+                        <li>Utilities</li>
+                        <ul>
+                            <li><a href="http://localhost:8080/xor">XOR</a></li>
+                        </ul>
+                    </ul>
+                </div>
+
+                <!-- page content -->
+                <div class="col-9 border border-dark rounded">
+                    <form class="pt-2">
+                        <div class="form-group row">
+                            <label for="input1" class="col-1 col-form-label">Input 1:</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="input1" value="12345678">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="input2" class="col-1 col-form-label">Input 2:</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="input2" value="CC99E897">
+                            </div>
+                            <div class="col-1 pl-0">
+                                <button type="submit" class="btn btn-primary" id="xor">XOR</button>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="result" class="col-1 col-form-label">Result:</label>
+                            <div class="col-6">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="result">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" type="button" id="copyButton" onclick="copyResult()">
+                                            <a class="fa fa-copy"></a>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- websocket scripting -->
+        <script defer>
             window.addEventListener("load", function(evt) {
                 var ws = null;
 
@@ -47,15 +135,23 @@
                 };
             });
         </script>
-    </head>
-    <body>
-        <form>
-            Input 1:<input id="input1" type="text" value="1234">
-            <p>
-            Input 2:<input id="input2" type="text" value="ABCD"> 
-            <p>
-            <button id="xor">XOR</button>
-        </form>
-        Result:<input id="result" type="text">
+
+        <!-- copy scripting -->
+        <script defer>
+            function copyResult() {
+                const hiddenText = document.createElement('textarea');
+                hiddenText.value = document.getElementById("result").value;
+                hiddenText.style.position = 'absolute';
+                hiddenText.style.left = '-999px';
+  
+                document.body.appendChild(hiddenText);
+                
+                hiddenText.select();
+  
+                document.execCommand('copy');
+  
+                document.body.removeChild(hiddenText);
+            }
+        </script>        
     </body>
 </html>

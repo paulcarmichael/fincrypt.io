@@ -54,14 +54,24 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, nil)
 }
 
-func faviconHandler(w http.ResponseWriter, r *http.Request) {
-	file, err := filepath.Abs("../src/github.com/paulcarmichael/fincrypt/images/favicon.ico")
+func fileHandler(w http.ResponseWriter, r *http.Request) {
+	var buffer bytes.Buffer
+
+	buffer.WriteString("../src/github.com/paulcarmichael/fincrypt/")
+
+	if r.URL.String() == "/favicon.ico" {
+		buffer.WriteString("images/favicon.ico")
+	} else if r.URL.String() == "/style.css" {
+		buffer.WriteString("css/style.css")
+	}
+
+	file, err := filepath.Abs(buffer.String())
 
 	if err != nil {
 		log.Fatal("Abs: ", err)
 	}
 
-	// check that the favicon file exists
+	// check that the file exists
 	_, err = os.Stat(file)
 
 	if err != nil {
@@ -88,7 +98,8 @@ func main() {
 
 	// register the handler functions
 	http.HandleFunc("/", serve)
-	http.HandleFunc("/favicon.ico", faviconHandler)
+	http.HandleFunc("/style.css", fileHandler)
+	http.HandleFunc("/favicon.ico", fileHandler)
 
 	// serve up some web pages
 	err = http.ListenAndServe(":8080", nil)

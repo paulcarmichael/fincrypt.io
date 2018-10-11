@@ -1,6 +1,15 @@
 <html>
     <head>
-        <title>AES</title>
+        <!-- required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+        <title>fincrypt: AES</title>
+
         <script>
             window.addEventListener("load", function(evt) {
                 var ws = null;
@@ -35,13 +44,18 @@
                         return false;
                     }
 
-                    var obj = {"Mode":0,
+                    var obj = {"Direction":0,
+                               "Mode":"CBC",
                                "Key":document.getElementById("key").value,
                                "Data":document.getElementById("data").value,
                                "IV":document.getElementById("iv").value};
 
                     if (document.getElementById("dec").checked) {
-                        obj.Mode = 1;
+                        obj.Direction = 1;
+                    }
+
+                    if (document.getElementById("ecb").checked) {
+                        obj.Mode = "ECB";
                     }
 
                     var json = JSON.stringify(obj);
@@ -53,21 +67,48 @@
                 };
             });
         </script>
+
+        <!-- jQuery, Popper.js, Bootstrap JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
     </head>
     <body>
-        <form>
-            <input id="enc" type="radio" name="mode" checked>Encrypt
-            <p>
-            <input id="dec" type="radio" name="mode">Decrypt
-            <p>
-            Key:<input id="key" type="text" value="1234567890ABCDEF1234567890ABCDEF">
-            <p>
-            Data:<input id="data" type="text" value="FEDCBA0987654321FEDCBA0987654321"> 
-            <p>
-            IV:<input id="iv" type="text" value="00000000000000000000000000000000"> 
-            <p>
-            <button id="aes">AES<button>
-        </form>
-        Result:<input id="result" type="text">
+        <!-- load the navbar -->
+        <div id="navbar"></div>
+        <script>$("#navbar").load("navbar");</script>
+
+        <div class="container-fluid pt-2 ml-2">
+            <div class="row">
+                <!-- sidebar -->
+                <div class="col-2 border border-dark rounded mr-2">
+                    <!-- load the sidebar list -->
+                    <div id="sidebar"></div>
+                    <script>$("#sidebar").load("sidebar");</script>
+                </div>
+
+                <!-- main content -->
+                <div class="col-9 border border-dark rounded">
+                    <form>
+                        <input id="enc" type="radio" name="direction" checked>Encrypt
+                        <p>
+                        <input id="dec" type="radio" name="direction">Decrypt
+                        <p>
+                        <input id="cbc" type="radio" name="mode" checked>CBC
+                        <p>
+                        <input id="ecb" type="radio" name="mode">ECB
+                        <p>
+                        Key:<input id="key" type="text" value="1234567890ABCDEF1234567890ABCDEF">
+                        <p>
+                        Data:<input id="data" type="text" value="FEDCBA0987654321FEDCBA0987654321"> 
+                        <p>
+                        IV:<input id="iv" type="text" value="00000000000000000000000000000000"> 
+                        <p>
+                        <button id="aes">AES</button>
+                    </form>
+                    Result:<input id="result" type="text">
+                </div>
+            </div>
+        </div>
     </body>
 </html>
