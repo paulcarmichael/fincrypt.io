@@ -63,6 +63,8 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 		buffer.WriteString("images/favicon.ico")
 	} else if r.URL.String() == "/style.css" {
 		buffer.WriteString("css/style.css")
+	} else { // serve scripts
+		buffer.WriteString(r.URL.String())
 	}
 
 	file, err := filepath.Abs(buffer.String())
@@ -100,6 +102,7 @@ func main() {
 	http.HandleFunc("/", serve)
 	http.HandleFunc("/style.css", fileHandler)
 	http.HandleFunc("/favicon.ico", fileHandler)
+	http.HandleFunc("/scripts/", fileHandler)
 
 	// serve up some web pages
 	err = http.ListenAndServe(":8080", nil)

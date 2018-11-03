@@ -1,3 +1,20 @@
-p, a, li, label, button, input {
+* {
     font-family: 'Roboto Mono', monospace;
+    font-size: 15px;
+}
+
+ul {
+    padding-left: 30px;
+}
+
+.sidebar {
+    width: 150px;
+}
+
+.tooltip-inner {
+    font-size: 12px;
+}
+
+.btn.btn-secondary.active {
+    background-color: #5CB85C !important;
 }
