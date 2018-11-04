@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: XOR</title>
+        <title>fincrypt: DES</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -41,34 +41,68 @@
                         <li>Ciphers</li>
                         <ul>
                             <li><a href="/aes" class="text-dark">AES</a></li>
-                            <li><a href="/des" class="text-dark">DES</a></li>
+                            <li><a href="" class="text-dark">DES</a></li>
                         </ul>
                         <li>Utilities</li>
                         <ul>
                             <li><a href="/base64" class="text-dark">Base64</a></li>
-                            <li><a href="" class="text-dark">XOR</a></li>
+                            <li><a href="/xor" class="text-dark">XOR</a></li>
                         </ul>
                     </ul>
                 </div>
 
                 <!-- page content -->
                 <div class="col col-lg-6 border border-dark rounded">
+                    <p></p>
+                    <p>Use an 8 byte key for DES operations. Use a 16 or 24 byte key for triple DES operations.</p>
                     <form class="pt-2">
                         <div class="row form-group">
-                            <label for="input1" class="col-2 col-form-label pr-0">Input 1:</label>
+                            <label for="key" class="col-2 col-form-label pr-0">Key:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="input1" value="12345678">
+                                <input type="text" class="form-control text-uppercase" id="key" value="FFEEDDCCBBAA0099">
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="input2" class="col-2 col-form-label pr-0">Input 2:</label>
+                            <label for="data" class="col-2 col-form-label pr-0">Data:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="input2" value="CC99E897">
+                                <input type="text" class="form-control text-uppercase" id="data" value="1122334455667788">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="iv" class="col-2 col-form-label pr-0">IV:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="iv" value="0000000000000000">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="mode" class="col-2 col-form-label pr-0">Mode:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="mode" id="ecb" checked>ECB
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="cbc">CBC
+                                    </label>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="direction" class="col-2 col-form-label pr-0">Direction:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="direction" id="enc" checked>Encrypt
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="direction" id="dec">Decrypt
+                                    </label>
+                                </div> 
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="xor">XOR</button>
+                                <button type="submit" class="btn btn-primary" id="des">DES</button>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -121,7 +155,7 @@
         <script defer>
             window.addEventListener("load", function(event) {
                 var ws = null;
-                ws = new WebSocket("ws://localhost:8081/xor");
+                ws = new WebSocket("ws://localhost:8081/des");
 
                 ws.onopen = function(event) {
                     console.log("WebSocket connected!");
@@ -134,11 +168,11 @@
                 }
 
                 ws.onerror = function(event) {
-                    console.log("WebSocket error: " + event.data);
+                    console.log("Error: " + event.data);
                 }
 
                 ws.onmessage = function(event) {
-                    console.log("WebSocket response: " + event.data);
+                    console.log("Response: " + event.data);
 
                     var object = JSON.parse(event.data);
 
@@ -153,25 +187,36 @@
                     }
                 }
 
-                document.getElementById("xor").onclick = function(event) {
+                document.getElementById("des").onclick = function(event) {
                     if (ws == null) {
                         console.log("WebSocket not connected!");
                         return false;
                     }
 
-                    var object = {"Input1":document.getElementById("input1").value,
-                                  "Input2":document.getElementById("input2").value};
+                    var object = {"Direction":0,
+                                  "Mode":"CBC",
+                                  "Key":document.getElementById("key").value,
+                                  "Data":document.getElementById("data").value,
+                                  "IV":document.getElementById("iv").value};
+
+                    if (document.getElementById("dec").checked) {
+                        object.Direction = 1;
+                    }
+
+                    if (document.getElementById("ecb").checked) {
+                        object.Mode = "ECB";
+                    }
 
                     var json = JSON.stringify(object);
 
                     ws.send(json);
-                    console.log("WebSocket sent: " + json);
+                    console.log("Sent: " + json);
 
                     return false;
                 };
             });
         </script>
-
+    
         <!-- copy and tooltip functionality -->
         <script defer src="scripts/copy.js"></script>
     </body>
