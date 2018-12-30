@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: XOR</title>
+        <title>fincrypt: TLV Parsing</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -46,8 +46,8 @@
                         <li>Utilities</li>
                         <ul>
                             <li><a href="/base64" class="text-dark">Base64</a></li>
-                            <li><a href="/bertlv" class="text-dark">TLV Parsing</a></li>
-                            <li><a href="" class="text-dark">XOR</a></li>
+                            <li><a href="" class="text-dark">TLV Parsing</a></li>
+                            <li><a href="/xor" class="text-dark">XOR</a></li>
                         </ul>
                     </ul>
                 </div>
@@ -56,27 +56,21 @@
                 <div class="col col-lg-6 border border-dark rounded">
                     <form class="pt-2">
                         <div class="row form-group">
-                            <label for="input1" class="col-2 col-form-label pr-0">Input 1:</label>
+                            <label for="input" class="col-2 col-form-label pr-0">Input :</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="input1" value="12345678">
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <label for="input2" class="col-2 col-form-label pr-0">Input 2:</label>
-                            <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="input2" value="CC99E897">
+                                <input type="text" class="form-control" id="input" value="9F1008AAAAAAAAAAAAAAAA">
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="xor">XOR</button>
+                                <button type="submit" class="btn btn-primary" id="parse">Parse TLV</button>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="result" class="col-2 col-form-label pr-0">Result:</label>
+                            <label for="result" class="col-2 col-form-label pr-0 case-sensitive">Result:</label>
                             <div class="col pl-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-uppercase" id="result">
+                                    <input type="text" class="form-control" id="result">
                                     <div class="input-group-append">
                                         <button class="btn btn-secondary" type="button" id="copyButton">
                                             <a class="fa fa-copy"></a>
@@ -122,7 +116,7 @@
         <script defer>
             window.addEventListener("load", function(event) {
                 var ws = null;
-                ws = new WebSocket("ws://localhost:8081/xor");
+                ws = new WebSocket("ws://localhost:8081/bertlv");
 
                 ws.onopen = function(event) {
                     console.log("WebSocket connected!");
@@ -135,11 +129,11 @@
                 }
 
                 ws.onerror = function(event) {
-                    console.log("WebSocket error: " + event.data);
+                    console.log("Error: " + event.data);
                 }
 
                 ws.onmessage = function(event) {
-                    console.log("WebSocket response: " + event.data);
+                    console.log("Response: " + event.data);
 
                     var object = JSON.parse(event.data);
 
@@ -154,19 +148,18 @@
                     }
                 }
 
-                document.getElementById("xor").onclick = function(event) {
+                document.getElementById("parse").onclick = function(event) {
                     if (ws == null) {
                         console.log("WebSocket not connected!");
                         return false;
                     }
 
-                    var object = {"Input1":document.getElementById("input1").value,
-                                  "Input2":document.getElementById("input2").value};
+                    var object = {"Request":document.getElementById("input").value};
 
                     var json = JSON.stringify(object);
 
                     ws.send(json);
-                    console.log("WebSocket sent: " + json);
+                    console.log("Sent: " + json);
 
                     return false;
                 };
