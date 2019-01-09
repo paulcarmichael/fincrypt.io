@@ -43,6 +43,7 @@
                             <li><a href="/aes" class="text-dark">AES</a></li>
                             <li><a href="/des" class="text-dark">DES</a></li>
                         </ul>
+                        <br>
                         <li>Utilities</li>
                         <ul>
                             <li><a href="/base64" class="text-dark">Base64</a></li>
@@ -66,18 +67,7 @@
                                 <button type="submit" class="btn btn-primary" id="parse">Parse TLV</button>
                             </div>
                         </div>
-                        <div class="row form-group">
-                            <label for="result" class="col-2 col-form-label pr-0 case-sensitive">Result:</label>
-                            <div class="col pl-0">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="result">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-secondary" type="button" id="copyButton">
-                                            <a class="fa fa-copy"></a>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                        <div id="result">
                         </div>
                     </form>
                 </div>
@@ -144,7 +134,31 @@
 
                         $('#errorModal').modal('show');
                     } else {
-                        document.getElementById("result").value = object.Res;
+                        // parse the JSON formatted tags into an objects array
+                        var objects = JSON.parse(object.Res)
+
+                        // populate the result div from the object array
+                        var result = document.getElementById("result");
+
+                        for (var i = 0; i < objects.length; i++) {
+                            var hr = document.createElement("hr");
+                            result.appendChild(hr);
+
+                            var name = document.createTextNode(objects[i].Tag + ": " + objects[i].Name);
+                            result.appendChild(name);
+
+                            var br = document.createElement("br");
+                            result.appendChild(br);
+
+                            var value = document.createTextNode(objects[i].Value);
+                            result.appendChild(value);
+
+                            var br2 = document.createElement("br");
+                            result.appendChild(br2);
+                        }
+
+                        var hr = document.createElement("hr");
+                        result.appendChild(hr);
                     }
                 }
 
@@ -154,6 +168,10 @@
                         return false;
                     }
 
+                    // clear any existing result content
+                    document.getElementById("result").innerHTML = "";
+
+                    // build and send the new request
                     var object = {"Request":document.getElementById("input").value};
 
                     var json = JSON.stringify(object);
