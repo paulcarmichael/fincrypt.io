@@ -37,17 +37,34 @@
             <div class="row justify-content-lg-center p-2">
                 <!-- sidebar -->
                 <div class="sidebar border border-dark rounded mr-2">
-                    <ul>
+                    <ul class="pt-2">
                         <li>Ciphers</li>
                         <ul>
                             <li><a href="/aes" class="text-dark">AES</a></li>
                             <li><a href="" class="text-dark">DES</a></li>
                         </ul>
                         <br>
+                        <li>EMV</li>
+                        <ul>
+                            <li><a href="/bertlv" class="text-dark">TLV Parsing</a></li>
+                        </ul>
+                        <br>
+                        <li>Hashes</li>
+                        <ul>
+                            <li>SHA</li>
+                            <li>MD</li>
+                        </ul>
+                        <br>
+                        <li>MAC</li>
+                        <ul>
+                            <li><a href="/desmac" class="text-dark">DES MAC</a></li>
+                            <li>HMAC</li>
+                        </ul>
+                        <br>
                         <li>Utilities</li>
                         <ul>
                             <li><a href="/base64" class="text-dark">Base64</a></li>
-                            <li><a href="/bertlv" class="text-dark">TLV Parsing</a></li>
+                            <li>Luhn</li>
                             <li><a href="/xor" class="text-dark">XOR</a></li>
                         </ul>
                     </ul>
@@ -55,9 +72,9 @@
 
                 <!-- page content -->
                 <div class="col col-lg-6 border border-dark rounded">
-                    <p></p>
-                    <p>Use an 8 byte key for DES operations. Use a 16 or 24 byte key for triple DES operations.</p>
-                    <form class="pt-2">
+                    <p class="pt-2">Use an 8 byte key for DES operations. Use a 16 or 24 byte key for triple DES operations.</p>
+                    <br>
+                    <form>
                         <div class="row form-group">
                             <label for="key" class="col-2 col-form-label pr-0">Key:</label>
                             <div class="col pl-0">

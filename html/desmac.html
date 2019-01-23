@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: Base64</title>
+        <title>fincrypt: DES MAC</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -57,13 +57,13 @@
                         <br>
                         <li>MAC</li>
                         <ul>
-                            <li><a href="/desmac" class="text-dark">DES MAC</a></li>
+                            <li><a href="" class="text-dark">DES MAC</a></li>
                             <li>HMAC</li>
                         </ul>
                         <br>
                         <li>Utilities</li>
                         <ul>
-                            <li><a href="" class="text-dark">Base64</a></li>
+                            <li><a href="/base64" class="text-dark">Base64</a></li>
                             <li>Luhn</li>
                             <li><a href="/xor" class="text-dark">XOR</a></li>
                         </ul>
@@ -72,36 +72,47 @@
 
                 <!-- page content -->
                 <div class="col col-lg-6 border border-dark rounded">
-                    <form class="pt-2">
+                    <p class="pt-2">This tool generates a Retail MAC as described by <a href="https://en.wikipedia.org/wiki/ISO/IEC_9797-1" target="_blank">ISO-9797-1</a>.</p>
+                    <br>
+                    <form>
                         <div class="row form-group">
-                            <label for="input" class="col-2 col-form-label pr-0">Input :</label>
+                            <label for="key" class="col-2 col-form-label pr-0">Key:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control" id="input" value="VkFMQVJJVEFT">
+                                <input type="text" class="form-control text-uppercase" id="key" value="FFEEDDCCBBAA00992222222222222222">
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="direction" class="col-2 col-form-label pr-0">Direction:</label>
+                            <label for="data" class="col-2 col-form-label pr-0">Data:</label>
                             <div class="col pl-0">
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary shadow-none active">
-                                        <input type="radio" name="direction" id="enc" checked>Encode
-                                    </label>
-                                    <label class="btn btn-secondary shadow-none">
-                                        <input type="radio" name="direction" id="dec">Decode
-                                    </label>
-                                </div> 
+                                <input type="text" class="form-control text-uppercase" id="data" value="1122334455667788FF">
                             </div>
                         </div>
+                        <div class="row form-group">
+                                <label for="padding" class="col-2 col-form-label pr-0">Padding:</label>
+                                <div class="col pl-0">
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn btn-secondary shadow-none">
+                                            <input type="radio" name="mode" id="padding_none">None
+                                        </label>
+                                        <label class="btn btn-secondary shadow-none">
+                                                <input type="radio" name="mode" id="padding_m1">Method 1
+                                            </label>
+                                        <label class="btn btn-secondary shadow-none active">
+                                            <input type="radio" name="mode" id="padding_m2" checked>Method 2
+                                        </label>
+                                    </div> 
+                                </div>
+                            </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="base64">Base64</button>
+                                <button type="submit" class="btn btn-primary" id="desmac">DES MAC</button>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="result" class="col-2 col-form-label pr-0 case-sensitive">Result:</label>
+                            <label for="result" class="col-2 col-form-label pr-0">Result:</label>
                             <div class="col pl-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="result">
+                                    <input type="text" class="form-control text-uppercase" id="result">
                                     <div class="input-group-append">
                                         <button class="btn btn-secondary" type="button" id="copyButton">
                                             <a class="fa fa-copy"></a>
@@ -147,7 +158,7 @@
         <script defer>
             window.addEventListener("load", function(event) {
                 var ws = null;
-                ws = new WebSocket("ws://localhost:8081/base64");
+                ws = new WebSocket("ws://localhost:8081/desmac");
 
                 ws.onopen = function(event) {
                     console.log("WebSocket connected!");
@@ -179,17 +190,20 @@
                     }
                 }
 
-                document.getElementById("base64").onclick = function(event) {
+                document.getElementById("desmac").onclick = function(event) {
                     if (ws == null) {
                         console.log("WebSocket not connected!");
                         return false;
                     }
 
-                    var object = {"Direction":0,
-                                  "Input":document.getElementById("input").value};
+                    var object = {"Key":document.getElementById("key").value,
+                                  "Data":document.getElementById("data").value,
+                                  "Padding":"NONE"};
 
-                    if (document.getElementById("dec").checked) {
-                        object.Direction = 1;
+                    if (document.getElementById("padding_m1").checked) {
+                        object.Padding = "M1";
+                    } else if (document.getElementById("padding_m2").checked) {
+                        object.Padding = "M2";
                     }
 
                     var json = JSON.stringify(object);
@@ -201,7 +215,7 @@
                 };
             });
         </script>
-
+    
         <!-- copy and tooltip functionality -->
         <script defer src="scripts/copy.js"></script>
     </body>
