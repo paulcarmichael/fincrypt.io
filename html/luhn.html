@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: Base64</title>
+        <title>fincrypt: Luhn</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -63,8 +63,8 @@
                         <br>
                         <li>Utilities</li>
                         <ul>
-                            <li><a href="" class="text-dark">Base64</a></li>
-                            <li><a href="/luhn" class="text-dark">Luhn</a></li>
+                            <li><a href="/base64" class="text-dark">Base64</a></li>
+                            <li><a href="" class="text-dark">Luhn</a></li>
                             <li><a href="/xor" class="text-dark">XOR</a></li>
                         </ul>
                     </ul>
@@ -74,34 +74,34 @@
                 <div class="col col-lg-6 border border-dark rounded">
                     <form class="pt-2">
                         <div class="row form-group">
-                            <label for="input" class="col-2 col-form-label pr-0">Input :</label>
+                            <label for="input" class="col-2 col-form-label pr-0">Input:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control" id="input" value="VkFMQVJJVEFT">
+                                <input type="text" class="form-control text-uppercase" id="input" value="79927398713">
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="direction" class="col-2 col-form-label pr-0">Direction:</label>
-                            <div class="col pl-0">
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary shadow-none active">
-                                        <input type="radio" name="direction" id="enc" checked>Encode
-                                    </label>
-                                    <label class="btn btn-secondary shadow-none">
-                                        <input type="radio" name="direction" id="dec">Decode
-                                    </label>
-                                </div> 
+                                <label for="mode" class="col-2 col-form-label pr-0">Mode:</label>
+                                <div class="col pl-0">
+                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                        <label class="btn btn-secondary shadow-none">
+                                            <input type="radio" name="mode" id="mode_gen">Generate
+                                        </label>
+                                        <label class="btn btn-secondary shadow-none active">
+                                                <input type="radio" name="mode" id="mode_val" checked>Validate
+                                        </label>
+                                    </div> 
+                                </div>
                             </div>
-                        </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="base64">Base64</button>
+                                <button type="submit" class="btn btn-primary" id="luhn">Luhn</button>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="result" class="col-2 col-form-label pr-0 case-sensitive">Result:</label>
+                            <label for="result" class="col-2 col-form-label pr-0">Result:</label>
                             <div class="col pl-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="result">
+                                    <input type="text" class="form-control text-uppercase" id="result">
                                     <div class="input-group-append">
                                         <button class="btn btn-secondary" type="button" id="copyButton">
                                             <a class="fa fa-copy"></a>
@@ -109,6 +109,8 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div id="message">
                         </div>
                     </form>
                 </div>
@@ -147,7 +149,7 @@
         <script defer>
             window.addEventListener("load", function(event) {
                 var ws = null;
-                ws = new WebSocket("ws://fincrypt.io:7712/base64");
+                ws = new WebSocket("ws://fincrypt.io:7712/luhn");
 
                 ws.onopen = function(event) {
                     console.log("WebSocket connected!");
@@ -175,21 +177,33 @@
 
                         $('#errorModal').modal('show');
                     } else {
+                        // set the result value
                         document.getElementById("result").value = object.Res;
+
+                        // if we validate a luhn display a helper message
+                        if (document.getElementById("mode_val").checked) {
+                            var message = document.getElementById("message"); 
+
+                            var p = document.createTextNode("The valid luhn digit of the input string is " + object.Res);
+                            message.appendChild(p);                            
+                        }
                     }
                 }
 
-                document.getElementById("base64").onclick = function(event) {
+                document.getElementById("luhn").onclick = function(event) {
                     if (ws == null) {
                         console.log("WebSocket not connected!");
                         return false;
                     }
 
-                    var object = {"Direction":0,
+                    // clear any existing message content
+                    document.getElementById("message").innerHTML = "";
+
+                    var object = {"Mode":0,
                                   "Input":document.getElementById("input").value};
 
-                    if (document.getElementById("dec").checked) {
-                        object.Direction = 1;
+                    if (document.getElementById("mode_val").checked) {
+                        object.Mode = 1;
                     }
 
                     var json = JSON.stringify(object);
@@ -201,7 +215,7 @@
                 };
             });
         </script>
-
+    
         <!-- copy and tooltip functionality -->
         <script defer src="scripts/copy.js"></script>
     </body>
