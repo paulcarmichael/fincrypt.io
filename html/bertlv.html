@@ -61,6 +61,13 @@
                             <li>HMAC</li>
                         </ul>
                         <br>
+                        <li>Payment Validation</li>
+                        <ul>
+                            <li><a href="/cvv" class="text-dark">CVV</a></li>
+                            <li>PVV</li>
+                            <li>PIN blocks</li>
+                        </ul>
+                        <br>
                         <li>Utilities</li>
                         <ul>
                             <li><a href="/base64" class="text-dark">Base64</a></li>
@@ -152,7 +159,7 @@
                         $('#errorModal').modal('show');
                     } else {
                         // parse the JSON formatted tags into an objects array
-                        var objects = JSON.parse(object.Res)
+                        var objects = JSON.parse(object.Res);
 
                         // populate the result div from the object array
                         var result = document.getElementById("result");

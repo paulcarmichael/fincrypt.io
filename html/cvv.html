@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: DES</title>
+        <title>fincrypt: CVV</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -41,7 +41,7 @@
                         <li>Ciphers</li>
                         <ul>
                             <li><a href="/aes" class="text-dark">AES</a></li>
-                            <li><a href="" class="text-dark">DES</a></li>
+                            <li><a href="/des" class="text-dark">DES</a></li>
                         </ul>
                         <br>
                         <li>EMV</li>
@@ -63,7 +63,7 @@
                         <br>
                         <li>Payment Validation</li>
                         <ul>
-                            <li><a href="/cvv" class="text-dark">CVV</a></li>
+                            <li><a href="" class="text-dark">CVV</a></li>
                             <li>PVV</li>
                             <li>PIN blocks</li>
                         </ul>
@@ -79,68 +79,57 @@
 
                 <!-- page content -->
                 <div class="col col-lg-6 border border-dark rounded">
-                    <p class="pt-2">Use an 8 byte key for DES operations. Use a 16 or 24 byte key for triple DES operations.</p>
-                    <br>
-                    <form>
+                    <form class="pt-2">
                         <div class="row form-group">
-                            <label for="key" class="col-2 col-form-label pr-0">Key:</label>
+                            <label for="PAN" class="col-2 col-form-label pr-0">PAN:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="key" value="FFEEDDCCBBAA0099">
+                                <input type="text" class="form-control text-uppercase" id="PAN" value="5486960000008273">
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="data" class="col-2 col-form-label pr-0">Data:</label>
+                            <label for="expiry" class="col-2 col-form-label pr-0">Expiry (YYMM):</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="data" value="1122334455667788">
+                                <input type="text" class="form-control text-uppercase" id="expiry" value="1812">
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="iv" class="col-2 col-form-label pr-0">IV:</label>
+                            <label for="svc" class="col-2 col-form-label pr-0">Service Code:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="iv" value="0000000000000000">
+                                <input type="text" class="form-control text-uppercase" id="svc" value="201">
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="mode" class="col-2 col-form-label pr-0">Mode:</label>
+                            <label for="cvk" class="col-2 col-form-label pr-0">CVK:</label>
                             <div class="col pl-0">
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary shadow-none active">
-                                        <input type="radio" name="mode" id="ecb" checked>ECB
-                                    </label>
-                                    <label class="btn btn-secondary shadow-none">
-                                        <input type="radio" name="mode" id="cbc">CBC
-                                    </label>
-                                </div> 
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <label for="direction" class="col-2 col-form-label pr-0">Direction:</label>
-                            <div class="col pl-0">
-                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                    <label class="btn btn-secondary shadow-none active">
-                                        <input type="radio" name="direction" id="enc" checked>Encrypt
-                                    </label>
-                                    <label class="btn btn-secondary shadow-none">
-                                        <input type="radio" name="direction" id="dec">Decrypt
-                                    </label>
-                                </div> 
+                                <input type="text" class="form-control text-uppercase" id="cvk" value="85321049CE2CE9CD32D6F87FD5CD808A">
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="des">DES</button>
+                                <button type="submit" class="btn btn-primary" id="cvv">Generate CVVs</button>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="result" class="col-2 col-form-label pr-0">Result:</label>
+                            <label for="rcvv" class="col-2 col-form-label pr-0">CVV:</label>
                             <div class="col pl-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-uppercase" id="result">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-secondary" type="button" id="copyButton">
-                                            <a class="fa fa-copy"></a>
-                                        </button>
-                                    </div>
+                                    <input type="text" class="form-control text-uppercase" id="rcvv">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="rcvv2" class="col-2 col-form-label pr-0">CVV2:</label>
+                            <div class="col pl-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-uppercase" id="rcvv2">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="ricvv" class="col-2 col-form-label pr-0">iCVV:</label>
+                            <div class="col pl-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-uppercase" id="ricvv">
                                 </div>
                             </div>
                         </div>
@@ -181,7 +170,7 @@
         <script defer>
             window.addEventListener("load", function(event) {
                 var ws = null;
-                ws = new WebSocket("ws://fincrypt.io:7712/des");
+                ws = new WebSocket("ws://fincrypt.io:7712/cvv");
 
                 ws.onopen = function(event) {
                     console.log("WebSocket connected!");
@@ -209,29 +198,25 @@
 
                         $('#errorModal').modal('show');
                     } else {
-                        document.getElementById("result").value = object.Res;
+                        // parse the json formatted CVVs into an object
+                        var CVVs = JSON.parse(object.Res);
+
+                        document.getElementById("rcvv").value = CVVs.CVV;
+                        document.getElementById("rcvv2").value = CVVs.CVV2;
+                        document.getElementById("ricvv").value = CVVs.ICVV;
                     }
                 }
 
-                document.getElementById("des").onclick = function(event) {
+                document.getElementById("cvv").onclick = function(event) {
                     if (ws == null) {
                         console.log("WebSocket not connected!");
                         return false;
                     }
 
-                    var object = {"Direction":0,
-                                  "Mode":"CBC",
-                                  "Key":document.getElementById("key").value,
-                                  "Data":document.getElementById("data").value,
-                                  "IV":document.getElementById("iv").value};
-
-                    if (document.getElementById("dec").checked) {
-                        object.Direction = 1;
-                    }
-
-                    if (document.getElementById("ecb").checked) {
-                        object.Mode = "ECB";
-                    }
+                    var object = {"PAN":document.getElementById("PAN").value,
+                                  "Expiry":document.getElementById("expiry").value,
+                                  "ServiceCode":document.getElementById("svc").value,
+                                  "CVK":document.getElementById("cvk").value};
 
                     var json = JSON.stringify(object);
 

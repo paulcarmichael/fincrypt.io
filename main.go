@@ -84,7 +84,7 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// start the logger
+	// start the diagnostic logger
 	logFile, err := os.OpenFile("/go/logs/fincrypt.log",
 		os.O_WRONLY|os.O_CREATE|os.O_APPEND,
 		666)
@@ -94,15 +94,16 @@ func main() {
 	}
 
 	defer logFile.Close()
-
 	log.SetOutput(logFile)
-	log.Println("fincrypt started...")
+	log.Println("fincrypt starting...")
 
 	// register the handler functions
 	http.HandleFunc("/", serve)
 	http.HandleFunc("/style.css", fileHandler)
 	http.HandleFunc("/favicon.ico", fileHandler)
 	http.HandleFunc("/scripts/", fileHandler)
+
+	log.Println("fincrypt started...")
 
 	// serve up some web pages
 	err = http.ListenAndServe(":80", nil)
