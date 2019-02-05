@@ -13,7 +13,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	// build the file path of the template we require based on the request URL
 	var buffer bytes.Buffer
 
-	buffer.WriteString("/go/src/github.com/paulcarmichael/fincrypt/html")
+	buffer.WriteString("/go/src/github.com/paulcarmichael/fincrypt_http/html")
 
 	if r.URL.String() == "/" {
 		buffer.WriteString("/index")
@@ -36,7 +36,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("ParseFiles: ", err)
 
-		file, err = filepath.Abs("/go/src/github.com/paulcarmichael/fincrypt/html/404.html")
+		file, err = filepath.Abs("/go/src/github.com/paulcarmichael/fincrypt_http/html/404.html")
 
 		if err != nil {
 			log.Fatal("Abs: ", err)
@@ -57,7 +57,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 func fileHandler(w http.ResponseWriter, r *http.Request) {
 	var buffer bytes.Buffer
 
-	buffer.WriteString("/go/src/github.com/paulcarmichael/fincrypt/")
+	buffer.WriteString("/go/src/github.com/paulcarmichael/fincrypt_http/")
 
 	if r.URL.String() == "/favicon.ico" {
 		buffer.WriteString("images/favicon.ico")
@@ -85,7 +85,7 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// start the diagnostic logger
-	logFile, err := os.OpenFile("/go/logs/fincrypt.log",
+	logFile, err := os.OpenFile("/go/logs/fincrypt_http.log",
 		os.O_WRONLY|os.O_CREATE|os.O_APPEND,
 		666)
 
@@ -95,7 +95,7 @@ func main() {
 
 	defer logFile.Close()
 	log.SetOutput(logFile)
-	log.Println("fincrypt starting...")
+	log.Println("fincrypt_http starting...")
 
 	// register the handler functions
 	http.HandleFunc("/", serve)
@@ -103,7 +103,7 @@ func main() {
 	http.HandleFunc("/favicon.ico", fileHandler)
 	http.HandleFunc("/scripts/", fileHandler)
 
-	log.Println("fincrypt started...")
+	log.Println("fincrypt_http started...")
 
 	// serve up some web pages
 	err = http.ListenAndServe(":80", nil)

@@ -1,2 +1,2 @@
-# fincrypt
-a webapp offering support for common payment industry cryptographic operations
+# fincrypt_http
+a webapp which provides solutions for common cryptography requirements found in the payment industry 
