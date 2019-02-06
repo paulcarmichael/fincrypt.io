@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: DES MAC</title>
+        <title>fincrypt: PVV</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -57,14 +57,14 @@
                         <br>
                         <li>MAC</li>
                         <ul>
-                            <li><a href="" class="text-dark">DES MAC</a></li>
+                            <li><a href="/desmac" class="text-dark">DES MAC</a></li>
                             <li>HMAC</li>
                         </ul>
                         <br>
                         <li>Cardholder Validation</li>
                         <ul>
                             <li><a href="/cvv" class="text-dark">CVV</a></li>
-                            <li><a href="/pvv" class="text-dark">PVV</a></li>
+                            <li><a href="" class="text-dark">PVV</a></li>
                             <li>PIN blocks</li>
                         </ul>
                         <br>
@@ -79,44 +79,40 @@
 
                 <!-- page content -->
                 <div class="col col-lg-6 border border-dark rounded">
-                    <p class="pt-2">This tool generates a Retail MAC as described by <a href="https://en.wikipedia.org/wiki/ISO/IEC_9797-1" target="_blank">ISO-9797-1</a>.</p>
+                    <p class="pt-2">This tool generates a Visa method PIN Verification Value as described <a href="https://en.wikipedia.org/wiki/Personal_identification_number#VISA_method" target="_blank">here</a>.</p>
                     <br>
                     <form>
                         <div class="row form-group">
-                            <label for="key" class="col-2 col-form-label pr-0">Key:</label>
+                            <label for="PAN" class="col-2 col-form-label pr-0">PAN:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="key" value="D0C8B843CFEDD831E7A63B41F7FD0422">
+                                <input type="text" class="form-control text-uppercase" id="PAN" value="5486960000008273">
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="data" class="col-2 col-form-label pr-0">Data:</label>
+                            <label for="PIN" class="col-2 col-form-label pr-0">PIN:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="data" value="00000000150000000000000008400000040000084014111900019A5199180000070FA501250000000000000000000000000F200000000000000000000000000000">
+                                <input type="text" class="form-control text-uppercase" id="PIN" value="1234">
                             </div>
                         </div>
                         <div class="row form-group">
-                                <label for="padding" class="col-2 col-form-label pr-0">Padding:</label>
-                                <div class="col pl-0">
-                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                        <label class="btn btn-secondary shadow-none">
-                                            <input type="radio" name="mode" id="padding_none">None
-                                        </label>
-                                        <label class="btn btn-secondary shadow-none">
-                                                <input type="radio" name="mode" id="padding_m1">Method 1
-                                        </label>
-                                        <label class="btn btn-secondary shadow-none active">
-                                            <input type="radio" name="mode" id="padding_m2" checked>Method 2
-                                        </label>
-                                    </div> 
-                                </div>
+                            <label for="PVKI" class="col-2 col-form-label pr-0">PVKI:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="PVKI" value="1">
                             </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="PVK" class="col-2 col-form-label pr-0">PVK:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="PVK" value="57E032204026015B04DCABE398B585A2">
+                            </div>
+                        </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="desmac">DES MAC</button>
+                                <button type="submit" class="btn btn-primary" id="PVV">Generate PVV</button>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="result" class="col-2 col-form-label pr-0">Result:</label>
+                            <label for="result" class="col-2 col-form-label pr-0">PVV:</label>
                             <div class="col pl-0">
                                 <div class="input-group">
                                     <input type="text" class="form-control text-uppercase" id="result">
@@ -165,7 +161,7 @@
         <script defer>
             window.addEventListener("load", function(event) {
                 var ws = null;
-                ws = new WebSocket("ws://fincrypt.io:7712/desmac");
+                ws = new WebSocket("ws://fincrypt.io:7712/pvv");
 
                 ws.onopen = function(event) {
                     console.log("WebSocket connected!");
@@ -193,25 +189,21 @@
 
                         $('#errorModal').modal('show');
                     } else {
+                        // set the result value
                         document.getElementById("result").value = object.Res;
                     }
                 }
 
-                document.getElementById("desmac").onclick = function(event) {
+                document.getElementById("PVV").onclick = function(event) {
                     if (ws == null) {
                         console.log("WebSocket not connected!");
                         return false;
                     }
 
-                    var object = {"Key":document.getElementById("key").value,
-                                  "Data":document.getElementById("data").value,
-                                  "Padding":"NONE"};
-
-                    if (document.getElementById("padding_m1").checked) {
-                        object.Padding = "M1";
-                    } else if (document.getElementById("padding_m2").checked) {
-                        object.Padding = "M2";
-                    }
+                    var object = {"PAN":document.getElementById("PAN").value,
+                                  "PIN":document.getElementById("PIN").value,
+                                  "PVKI":document.getElementById("PVKI").value,
+                                  "PVK":document.getElementById("PVK").value};
 
                     var json = JSON.stringify(object);
 
