@@ -27,7 +27,8 @@ func serve(w http.ResponseWriter, r *http.Request) {
 	file, err := filepath.Abs(buffer.String())
 
 	if err != nil {
-		log.Fatal("Abs: ", err)
+		log.Println("Abs: ", err)
+		return
 	}
 
 	t, err := template.ParseFiles(file)
@@ -39,13 +40,15 @@ func serve(w http.ResponseWriter, r *http.Request) {
 		file, err = filepath.Abs("/go/src/github.com/paulcarmichael/fincrypt_http/html/404.html")
 
 		if err != nil {
-			log.Fatal("Abs: ", err)
+			log.Println("Abs: ", err)
+			return
 		}
 
 		t, err = template.ParseFiles(file)
 
 		if err != nil {
-			log.Fatal("ParseFiles: ", err)
+			log.Println("ParseFiles: ", err)
+			return
 		}
 
 		w.WriteHeader(http.StatusNotFound)
@@ -70,14 +73,17 @@ func fileHandler(w http.ResponseWriter, r *http.Request) {
 	file, err := filepath.Abs(buffer.String())
 
 	if err != nil {
-		log.Fatal("Abs: ", err)
+		log.Println("Abs: ", err)
+		return
 	}
 
 	// check that the file exists
 	_, err = os.Stat(file)
 
 	if err != nil {
-		log.Fatal("Stat: ", err)
+		log.Println("Stat: ", err)
+		return
+
 	}
 
 	http.ServeFile(w, r, file)
