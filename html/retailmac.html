@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: DES MAC</title>
+        <title>fincrypt: Retail MAC</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -44,11 +44,6 @@
                             <li><a href="/des" class="text-dark">DES</a></li>
                         </ul>
                         <br>
-                        <li>EMV</li>
-                        <ul>
-                            <li><a href="/bertlv" class="text-dark">TLV Parsing</a></li>
-                        </ul>
-                        <br>
                         <li>Hashes</li>
                         <ul>
                             <li>SHA</li>
@@ -57,21 +52,22 @@
                         <br>
                         <li>MAC</li>
                         <ul>
-                            <li><a href="" class="text-dark">DES MAC</a></li>
                             <li>HMAC</li>
+                            <li><a href="" class="text-dark">Retail MAC</a></li>
                         </ul>
                         <br>
                         <li>Cardholder Validation</li>
                         <ul>
                             <li><a href="/cvv" class="text-dark">CVV</a></li>
+                            <li><a href="/pinoffset" class="text-dark">PIN Offset</a></li>
                             <li><a href="/pvv" class="text-dark">PVV</a></li>
-                            <li>PIN blocks</li>
                         </ul>
                         <br>
                         <li>Utilities</li>
                         <ul>
                             <li><a href="/base64" class="text-dark">Base64</a></li>
                             <li><a href="/luhn" class="text-dark">Luhn</a></li>
+                            <li><a href="/bertlv" class="text-dark">TLV Parsing</a></li>
                             <li><a href="/xor" class="text-dark">XOR</a></li>
                         </ul>
                     </ul>
@@ -112,7 +108,7 @@
                             </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="desmac">DES MAC</button>
+                                <button type="submit" class="btn btn-primary" id="retailmac">Retail MAC</button>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -165,7 +161,7 @@
         <script defer>
             window.addEventListener("load", function(event) {
                 var ws = null;
-                ws = new WebSocket("ws://fincrypt.io:7712/desmac");
+                ws = new WebSocket("ws://fincrypt.io:7712/retailmac");
 
                 ws.onopen = function(event) {
                     console.log("WebSocket connected!");
@@ -197,7 +193,7 @@
                     }
                 }
 
-                document.getElementById("desmac").onclick = function(event) {
+                document.getElementById("retailmac").onclick = function(event) {
                     if (ws == null) {
                         console.log("WebSocket not connected!");
                         return false;
