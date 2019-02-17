@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: TLV Parsing</title>
+        <title>fincrypt.io: TLV Parsing</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -25,7 +25,7 @@
     <body>
         <!-- navbar -->
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark pt-0 pb-0 shadow-sm">
-            <a class="navbar-brand" href="/">fincrypt</a>
+            <a class="navbar-brand" href="/">fincrypt.io</a>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
@@ -75,7 +75,7 @@
 
                 <!-- page content -->
                 <div class="col col-lg-6 border border-dark rounded">
-                    <p class="pt-2">This tool parses <a href="https://en.wikipedia.org/wiki/X.690#BER_encoding">BERTLV</a> encoded data from chip cards and returns tag information according to the EMV 4.3 specification.</p>
+                    <p class="pt-2">This tool parses <a href="https://en.wikipedia.org/wiki/X.690#BER_encoding" target="_blank">BERTLV</a> encoded data from chip cards and returns tag information according to the EMV 4.3 specification.</p>
                     <br>
                     <form>
                         <div class="row form-group">
@@ -86,7 +86,7 @@
                         </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="parse">Parse TLV</button>
+                                <button type="submit" class="btn btn-primary" id="calc">Parse TLV</button>
                             </div>
                         </div>
                         <div id="result">
@@ -120,59 +120,39 @@
         </div>
 
         <!-- jQuery, popper, bootstrap js -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-        <!-- websocket scripting -->
+        <!-- ajax scripting -->
         <script defer>
-            window.addEventListener("load", function(event) {
-                var ws = null;
-                ws = new WebSocket("ws://fincrypt.io:7712/bertlv");
+            $(document).ready(function() {
+                $("#calc").click(function () {
+                    document.getElementById("result").innerHTML = "";
 
-                ws.onopen = function(event) {
-                    console.log("WebSocket connected!");
-                }
+                    var obj = {"Input":document.getElementById("input").value};
 
-                ws.onclose = function(event) {
-                    ws.close();
-                    ws = null;
-                    console.log("WebSocket closed!");
-                }
+                    $.ajax({
+                        type: "POST",
+                        url: "/bertlv",
+                        data: JSON.stringify(obj),
+                        dataType: "json"
+                    }).done(function(data) {
+                        var tags = JSON.parse(data.Res);
 
-                ws.onerror = function(event) {
-                    console.log("Error: " + event.data);
-                }
-
-                ws.onmessage = function(event) {
-                    console.log("Response: " + event.data);
-
-                    var object = JSON.parse(event.data);
-
-                    // if an error is populated then show the error modal
-                    if (object.Err.length !== 0) {
-                        document.getElementById("result").value = "";
-                        document.getElementById("errorDescription").innerText = object.Err;
-
-                        $('#errorModal').modal('show');
-                    } else {
-                        // parse the JSON formatted tags into an objects array
-                        var objects = JSON.parse(object.Res);
-
-                        // populate the result div from the object array
                         var result = document.getElementById("result");
 
-                        for (var i = 0; i < objects.length; i++) {
+                        for (var i = 0; i < tags.length; i++) {
                             var hr = document.createElement("hr");
                             result.appendChild(hr);
 
-                            var name = document.createTextNode(objects[i].Tag + ": " + objects[i].Name);
+                            var name = document.createTextNode(tags[i].Tag + ": " + tags[i].Name);
                             result.appendChild(name);
 
                             var br = document.createElement("br");
                             result.appendChild(br);
 
-                            var value = document.createTextNode(objects[i].Value);
+                            var value = document.createTextNode(tags[i].Value);
                             result.appendChild(value);
 
                             var br2 = document.createElement("br");
@@ -181,28 +161,14 @@
 
                         var hr = document.createElement("hr");
                         result.appendChild(hr);
-                    }
-                }
-
-                document.getElementById("parse").onclick = function(event) {
-                    if (ws == null) {
-                        console.log("WebSocket not connected!");
-                        return false;
-                    }
-
-                    // clear any existing result content
-                    document.getElementById("result").innerHTML = "";
-
-                    // build and send the new request
-                    var object = {"Input":document.getElementById("input").value};
-
-                    var json = JSON.stringify(object);
-
-                    ws.send(json);
-                    console.log("Sent: " + json);
+                    }).fail(function (data) {
+                        document.getElementById("result").innerHTML = "";
+                        document.getElementById("errorDescription").innerText = data.responseJSON.Err;
+                        $('#errorModal').modal('show');
+                    });
 
                     return false;
-                };
+                });
             });
         </script>
 

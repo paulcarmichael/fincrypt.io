@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: CVV</title>
+        <title>fincrypt.io: CVV</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -25,7 +25,7 @@
     <body>
         <!-- navbar -->
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark pt-0 pb-0 shadow-sm">
-            <a class="navbar-brand" href="/">fincrypt</a>
+            <a class="navbar-brand" href="/">fincrypt.io</a>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
@@ -104,30 +104,30 @@
                         </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="cvv">Generate CVVs</button>
+                                <button type="submit" class="btn btn-primary" id="calc">Generate CVVs</button>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="rcvv" class="col-2 col-form-label pr-0">CVV:</label>
+                            <label for="CVV" class="col-2 col-form-label pr-0">CVV:</label>
                             <div class="col pl-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-uppercase" id="rcvv">
+                                    <input type="text" class="form-control text-uppercase" id="CVV">
                                 </div>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="rcvv2" class="col-2 col-form-label pr-0">CVV2:</label>
+                            <label for="CVV2" class="col-2 col-form-label pr-0">CVV2:</label>
                             <div class="col pl-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-uppercase" id="rcvv2">
+                                    <input type="text" class="form-control text-uppercase" id="CVV2">
                                 </div>
                             </div>
                         </div>
                         <div class="row form-group">
-                            <label for="ricvv" class="col-2 col-form-label pr-0">iCVV:</label>
+                            <label for="ICVV" class="col-2 col-form-label pr-0">iCVV:</label>
                             <div class="col pl-0">
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-uppercase" id="ricvv">
+                                    <input type="text" class="form-control text-uppercase" id="ICVV">
                                 </div>
                             </div>
                         </div>
@@ -160,72 +160,44 @@
         </div>
 
         <!-- jQuery, popper, bootstrap js -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-        <!-- websocket scripting -->
+        <!-- ajax scripting -->
         <script defer>
-            window.addEventListener("load", function(event) {
-                var ws = null;
-                ws = new WebSocket("ws://fincrypt.io:7712/cvv");
+            $(document).ready(function() {
+                $("#calc").click(function () {
+                    var obj = {"PAN":document.getElementById("PAN").value,
+                               "Expiry":document.getElementById("expiry").value,
+                               "ServiceCode":document.getElementById("svc").value,
+                               "CVK":document.getElementById("cvk").value};
 
-                ws.onopen = function(event) {
-                    console.log("WebSocket connected!");
-                }
+                    $.ajax({
+                        type: "POST",
+                        url: "/cvv",
+                        data: JSON.stringify(obj),
+                        dataType: "json"
+                    }).done(function(data) {
+                        var CVVs = JSON.parse(data.Res);
 
-                ws.onclose = function(event) {
-                    ws.close();
-                    ws = null;
-                    console.log("WebSocket closed!");
-                }
-
-                ws.onerror = function(event) {
-                    console.log("Error: " + event.data);
-                }
-
-                ws.onmessage = function(event) {
-                    console.log("Response: " + event.data);
-
-                    var object = JSON.parse(event.data);
-
-                    // if an error is populated then show the error modal
-                    if (object.Err.length !== 0) {
-                        document.getElementById("result").value = "";
-                        document.getElementById("errorDescription").innerText = object.Err;
-
+                        document.getElementById("CVV").value = CVVs.CVV;
+                        document.getElementById("CVV2").value = CVVs.CVV2;
+                        document.getElementById("ICVV").value = CVVs.ICVV;
+                    }).fail(function (data) {
+                        console.log(data);
+                        document.getElementById("CVV").value = "";
+                        document.getElementById("CVV2").value = "";
+                        document.getElementById("ICVV").value = "";
+                        document.getElementById("errorDescription").innerText = data.responseJSON.Err;
                         $('#errorModal').modal('show');
-                    } else {
-                        // parse the json formatted CVVs into an object
-                        var CVVs = JSON.parse(object.Res);
-
-                        document.getElementById("rcvv").value = CVVs.CVV;
-                        document.getElementById("rcvv2").value = CVVs.CVV2;
-                        document.getElementById("ricvv").value = CVVs.ICVV;
-                    }
-                }
-
-                document.getElementById("cvv").onclick = function(event) {
-                    if (ws == null) {
-                        console.log("WebSocket not connected!");
-                        return false;
-                    }
-
-                    var object = {"PAN":document.getElementById("PAN").value,
-                                  "Expiry":document.getElementById("expiry").value,
-                                  "ServiceCode":document.getElementById("svc").value,
-                                  "CVK":document.getElementById("cvk").value};
-
-                    var json = JSON.stringify(object);
-
-                    ws.send(json);
-                    console.log("Sent: " + json);
+                    });
 
                     return false;
-                };
+                });
             });
         </script>
-    
+
         <!-- copy and tooltip functionality -->
         <script defer src="scripts/copy.js"></script>
     </body>

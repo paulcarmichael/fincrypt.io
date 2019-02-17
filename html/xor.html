@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt: XOR</title>
+        <title>fincrypt.io: XOR</title>
 
         <!-- meta tags -->
         <meta charset="utf-8">
@@ -25,7 +25,7 @@
     <body>
         <!-- navbar -->
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark pt-0 pb-0 shadow-sm">
-            <a class="navbar-brand" href="/">fincrypt</a>
+            <a class="navbar-brand" href="/">fincrypt.io</a>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
@@ -90,7 +90,7 @@
                         </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="xor">XOR</button>
+                                <button type="submit" class="btn btn-primary" id="calc">XOR</button>
                             </div>
                         </div>
                         <div class="row form-group">
@@ -135,62 +135,32 @@
         </div>
 
         <!-- jQuery, popper, bootstrap js -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-        <!-- websocket scripting -->
+        <!-- ajax scripting -->
         <script defer>
-            window.addEventListener("load", function(event) {
-                var ws = null;
-                ws = new WebSocket("ws://fincrypt.io:7712/xor");
+            $(document).ready(function() {
+                $("#calc").click(function () {
+                    var obj = {"Input1":document.getElementById("input1").value,
+                               "Input2":document.getElementById("input2").value};
 
-                ws.onopen = function(event) {
-                    console.log("WebSocket connected!");
-                }
-
-                ws.onclose = function(event) {
-                    ws.close();
-                    ws = null;
-                    console.log("WebSocket closed!");
-                }
-
-                ws.onerror = function(event) {
-                    console.log("WebSocket error: " + event.data);
-                }
-
-                ws.onmessage = function(event) {
-                    console.log("WebSocket response: " + event.data);
-
-                    var object = JSON.parse(event.data);
-
-                    // if an error is populated then show the error modal
-                    if (object.Err.length !== 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/xor",
+                        data: JSON.stringify(obj),
+                        dataType: "json"
+                    }).done(function(data) {
+                        document.getElementById("result").value = data.Res;
+                    }).fail(function (data) {
                         document.getElementById("result").value = "";
-                        document.getElementById("errorDescription").innerText = object.Err;
-
+                        document.getElementById("errorDescription").innerText = data.responseJSON.Err;
                         $('#errorModal').modal('show');
-                    } else {
-                        document.getElementById("result").value = object.Res;
-                    }
-                }
-
-                document.getElementById("xor").onclick = function(event) {
-                    if (ws == null) {
-                        console.log("WebSocket not connected!");
-                        return false;
-                    }
-
-                    var object = {"Input1":document.getElementById("input1").value,
-                                  "Input2":document.getElementById("input2").value};
-
-                    var json = JSON.stringify(object);
-
-                    ws.send(json);
-                    console.log("WebSocket sent: " + json);
+                    });
 
                     return false;
-                };
+                });
             });
         </script>
 
