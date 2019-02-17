@@ -174,7 +174,7 @@
                         if (document.getElementById("mode_val").checked) {
                             var message = document.getElementById("message"); 
 
-                            var p = document.createTextNode("The valid luhn digit is " + object.Res + ".");
+                            var p = document.createTextNode("The valid luhn digit is " + data.Res + ".");
                             message.appendChild(p);                            
                         }
                     }).fail(function (data) {
