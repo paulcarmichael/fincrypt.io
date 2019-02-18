@@ -18,11 +18,19 @@ type operationResponse struct {
 	Err string
 }
 
+const htmlPath = "/go/src/github.com/paulcarmichael/fincrypt.io/html"
+const linksPath = htmlPath + "/links.html"
+const navbarPath = htmlPath + "/navbar.html"
+const sidebarPath = htmlPath + "/sidebar.html"
+const errorPath = htmlPath + "/error.html"
+const scriptsPath = htmlPath + "/scripts.html"
+const fourOhFourPath = htmlPath + "/404.html"
+
 func serve(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		// if the request method is get, it's a request for a webpage
 		var buffer bytes.Buffer
-		buffer.WriteString("/go/src/github.com/paulcarmichael/fincrypt.io/html")
+		buffer.WriteString(htmlPath)
 
 		if r.URL.String() == "/" {
 			buffer.WriteString("/index")
@@ -42,13 +50,13 @@ func serve(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		t, err := template.ParseFiles(file)
+		t, err := template.ParseFiles(file, linksPath, navbarPath, sidebarPath, errorPath, scriptsPath)
 
 		// if the template wasn't found then prepare the 404 page
 		if err != nil {
 			log.Println("ParseFiles: ", err)
 
-			file, err = filepath.Abs("/go/src/github.com/paulcarmichael/fincrypt.io/html/404.html")
+			file, err = filepath.Abs(fourOhFourPath)
 
 			if err != nil {
 				log.Println("Abs: ", err)
@@ -56,7 +64,7 @@ func serve(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			t, err = template.ParseFiles(file)
+			t, err = template.ParseFiles(file, linksPath, navbarPath, sidebarPath)
 
 			if err != nil {
 				log.Println("ParseFiles: ", err)
