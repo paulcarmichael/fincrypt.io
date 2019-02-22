@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>fincrypt.io: MD</title>
+        {{template "links.html"}}
+    </head>
+    <body>
+        {{template "navbar.html"}}
+        <div class="container-fluid">
+            <div class="row justify-content-lg-center p-2">
+                {{template "sidebar.html"}}
+                <div class="col col-lg-6 border border-dark rounded">
+                    <form class="pt-2">
+                        <div class="row form-group">
+                            <label for="input" class="col-2 col-form-label pr-0">Input :</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control" id="input" value="walkin'mydog">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="mode" class="col-2 col-form-label pr-0">Mode:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="MD4">MD4
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="mode" id="MD5" checked>MD5
+                                    </label>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-1 col-form-label">
+                                <button type="submit" class="btn btn-primary" id="calc">MD</button>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="result" class="col-2 col-form-label pr-0 case-sensitive">Result:</label>
+                            <div class="col pl-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="result">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" type="button" id="copyButton">
+                                            <a class="fa fa-copy"></a>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{template "error.html"}}
+        {{template "scripts.html"}}
+        <script defer>
+            $(document).ready(function() {
+                $("#calc").click(function () {
+                    var obj = {"Input":document.getElementById("input").value,
+                               "Mode":"MD5"};
+
+                    if (document.getElementById("MD4").checked) {
+                        obj.Mode = "MD4";
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/md",
+                        data: JSON.stringify(obj),
+                        dataType: "json"
+                    }).done(function(data) {
+                        document.getElementById("result").value = data.Res;
+                    }).fail(function (data) {
+                        document.getElementById("result").value = "";
+                        document.getElementById("errorDescription").innerText = data.responseJSON.Err;
+                        $('#errorModal').modal('show');
+                    });
+
+                    return false;
+                });
+            });
+        </script>
+    </body>
+</html>

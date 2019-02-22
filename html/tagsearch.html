@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>fincrypt.io: TLV Parsing</title>
+        <title>fincrypt.io: Tag Search</title>
         {{template "links.html"}}
     </head>
     <body>
@@ -10,18 +10,16 @@
             <div class="row justify-content-lg-center p-2">
                 {{template "sidebar.html"}}
                 <div class="col col-lg-6 border border-dark rounded">
-                    <p class="pt-2">This tool takes <a href="https://en.wikipedia.org/wiki/X.690#BER_encoding" target="_blank">BERTLV</a> encoded data from chip cards and returns the parsed tag information according to the EMV 4.3 specification.</p>
-                    <br>
-                    <form>
+                    <form class="pt-2">
                         <div class="row form-group">
-                            <label for="input" class="col-2 col-form-label pr-0">Input :</label>
+                            <label for="input" class="col-2 col-form-label pr-0">Tag :</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control" id="input" value="9F1008AAAAAAAAAAAAAAAA">
+                                <input type="text" class="form-control" id="input" value="9F10">
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
-                                <button type="submit" class="btn btn-primary" id="calc">Parse TLV</button>
+                                <button type="submit" class="btn btn-primary" id="calc">Tag Search</button>
                             </div>
                         </div>
                         <div id="result">
@@ -37,33 +35,38 @@
                 $("#calc").click(function () {
                     document.getElementById("result").innerHTML = "";
 
-                    var obj = {"Input":document.getElementById("input").value};
+                    var obj = {"Tag":document.getElementById("input").value};
 
                     $.ajax({
                         type: "POST",
-                        url: "/bertlv",
+                        url: "/tagsearch",
                         data: JSON.stringify(obj),
                         dataType: "json"
                     }).done(function(data) {
-                        var tags = JSON.parse(data.Res);
-
+                        var tag = JSON.parse(data.Res);
                         var result = document.getElementById("result");
 
-                        for (var i = 0; i < tags.length; i++) {
-                            var hr = document.createElement("hr");
-                            result.appendChild(hr);
+                        var hr = document.createElement("hr");
+                        result.appendChild(hr);
 
-                            var name = document.createTextNode(tags[i].Tag + ": " + tags[i].Name);
+                        if (tag.InvalidReason.length > 0) {
+                            var reason = document.createTextNode(tag.InvalidReason);
+                            result.appendChild(reason);
+                        } else {
+                            var name = document.createTextNode(tag.Tag + ": " + tag.Name);
                             result.appendChild(name);
 
                             var br = document.createElement("br");
                             result.appendChild(br);
 
-                            var value = document.createTextNode(tags[i].Value);
+                            var value = document.createTextNode("Format: " + tag.Format);
                             result.appendChild(value);
 
                             var br2 = document.createElement("br");
                             result.appendChild(br2);
+
+                            var value = document.createTextNode("Length: " + tag.MinLength + " - " + tag.MaxLength);
+                            result.appendChild(value);
                         }
 
                         var hr = document.createElement("hr");
