@@ -91,18 +91,18 @@ func serve(w http.ResponseWriter, r *http.Request) {
 			op = &fincrypt.CVVOperation{}
 		} else if url == "/des" {
 			op = &fincrypt.DESOperation{}
+		} else if url == "/hash" {
+			op = &fincrypt.HashOperation{}
+		} else if url == "/hmac" {
+			op = &fincrypt.HMACOperation{}
 		} else if url == "/luhn" {
 			op = &fincrypt.LuhnOperation{}
-		} else if url == "/md" {
-			op = &fincrypt.MDOperation{}
 		} else if url == "/pinoffset" {
 			op = &fincrypt.PINOffsetOperation{}
 		} else if url == "/pvv" {
 			op = &fincrypt.PVVOperation{}
 		} else if url == "/retailmac" {
 			op = &fincrypt.RetailMACOperation{}
-		} else if url == "/sha" {
-			op = &fincrypt.SHAOperation{}
 		} else if url == "/tagsearch" {
 			op = &fincrypt.BERTLVTag{}
 		} else if url == "/xor" {
