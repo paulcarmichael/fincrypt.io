@@ -67,16 +67,16 @@
             $(document).ready(function() {
                 $("#calc").click(function () {
                     var obj = {"Input":document.getElementById("input").value,
-                               "Mode":"SHA-1"};
+                               "HashMode":"SHA-1"};
 
                     if (document.getElementById("SHA-224").checked) {
-                        obj.Mode = "SHA-224";
+                        obj.HashMode = "SHA-224";
                     } else if (document.getElementById("SHA-256").checked) {
-                        obj.Mode = "SHA-256";
+                        obj.HashMode = "SHA-256";
                     } else if (document.getElementById("SHA-384").checked) {
-                        obj.Mode = "SHA-384";
+                        obj.HashMode = "SHA-384";
                     } else if (document.getElementById("SHA-512").checked) {
-                        obj.Mode = "SHA-512";
+                        obj.HashMode = "SHA-512";
                     }
 
                     $.ajax({

@@ -58,11 +58,12 @@
             $(document).ready(function() {
                 $("#calc").click(function () {
                     var obj = {"Input":document.getElementById("input").value,
-                               "Mode":"MD5"};
+                               "HashMode":"MD5"};
 
                     if (document.getElementById("MD4").checked) {
-                        obj.Mode = "MD4";
+                        obj.HashMode = "MD4";
                     }
+
                     $.ajax({
                         type: "POST",
                         url: "/hash",

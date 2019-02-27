@@ -16,43 +16,43 @@
                         <div class="row form-group">
                             <label for="key" class="col-2 col-form-label pr-0">Key:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="key" value="0102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F20">
+                                <input type="text" class="form-control text-uppercase" id="key" value="6B6579">
                             </div>
                         </div>
                         <div class="row form-group">
                             <label for="data" class="col-2 col-form-label pr-0">Data:</label>
                             <div class="col pl-0">
-                                <input type="text" class="form-control text-uppercase" id="data" value="CDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCDCD">
+                                <input type="text" class="form-control text-uppercase" id="data" value="54686520717569636B2062726F776E20666F78206A756D7073206F76657220746865206C617A7920646F67">
                             </div>
                         </div>
                         <div class="row form-group">
-                                <label for="padding" class="col-2 col-form-label pr-0">Hash:</label>
-                                <div class="col pl-0">
-                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                                        <label class="btn btn-secondary shadow-none">
-                                            <input type="radio" name="mode" id="SHA-1">SHA-1
-                                        </label>
-                                        <label class="btn btn-secondary shadow-none">
-                                            <input type="radio" name="mode" id="SHA-224">SHA-224
-                                        </label>
-                                        <label class="btn btn-secondary shadow-none active">
-                                            <input type="radio" name="mode" id="SHA-256" checked>SHA-256
-                                        </label>
-                                        <label class="btn btn-secondary shadow-none">
-                                            <input type="radio" name="mode" id="SHA-384">SHA-384
-                                        </label>
-                                        <label class="btn btn-secondary shadow-none">
-                                            <input type="radio" name="mode" id="SHA-512">SHA-512
-                                        </label>
-                                        <label class="btn btn-secondary shadow-none">
-                                            <input type="radio" name="mode" id="MD4">MD4
-                                        </label>
-                                        <label class="btn btn-secondary shadow-none">
-                                            <input type="radio" name="mode" id="MD5">MD5
-                                        </label>
-                                    </div> 
-                                </div>
+                            <label for="padding" class="col-2 col-form-label pr-0">Hash:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="mode" id="SHA-1" checked>SHA-1
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="SHA-224">SHA-224
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="SHA-256">SHA-256
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="SHA-384">SHA-384
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="SHA-512">SHA-512
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="MD4">MD4
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="MD5">MD5
+                                    </label>
+                                </div> 
                             </div>
+                        </div>
                         <div class="row form-group">
                             <div class="col-1 col-form-label">
                                 <button type="submit" class="btn btn-primary" id="calc">Calculate HMAC</button>
@@ -85,17 +85,17 @@
                                "HashMode":"SHA-256"};
 
                     if (document.getElementById("SHA-1").checked) {
-                        obj.Padding = "SHA-1";
+                        obj.HashMode = "SHA-1";
                     } else if (document.getElementById("SHA-224").checked) {
-                        obj.Padding = "SHA-224";
+                        obj.HashMode = "SHA-224";
                     } else if (document.getElementById("SHA-384").checked) {
-                        obj.Padding = "SHA-384";
+                        obj.HashMode = "SHA-384";
                     } else if (document.getElementById("SHA-512").checked) {
-                        obj.Padding = "SHA-512";
+                        obj.HashMode = "SHA-512";
                     } else if (document.getElementById("MD4").checked) {
-                        obj.Padding = "MD4";
+                        obj.HashMode = "MD4";
                     } else if (document.getElementById("MD5").checked) {
-                        obj.Padding = "MD5";
+                        obj.HashMode = "MD5";
                     }
 
                     $.ajax({

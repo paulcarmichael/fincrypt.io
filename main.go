@@ -97,6 +97,8 @@ func serve(w http.ResponseWriter, r *http.Request) {
 			op = &fincrypt.HMACOperation{}
 		} else if url == "/luhn" {
 			op = &fincrypt.LuhnOperation{}
+		} else if url == "/pinblock" {
+			op = &fincrypt.PINBlockOperation{}
 		} else if url == "/pinoffset" {
 			op = &fincrypt.PINOffsetOperation{}
 		} else if url == "/pvv" {

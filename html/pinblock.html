@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>fincrypt.io: PIN Block</title>
+        {{template "links.html"}}
+    </head>
+    <body>
+        {{template "navbar.html"}}
+        <div class="container-fluid">
+            <div class="row justify-content-lg-center p-2">
+                {{template "sidebar.html"}}
+                <div class="col col-lg-6 border border-dark rounded">
+                    <p class="pt-2">This tool calculates clear and encrypted PIN blocks using <a href="https://en.wikipedia.org/wiki/ISO_9564" target="_blank">ISO 9564</a> methods.</p>
+                    <br>
+                    <form>
+                        <div class="row form-group">
+                            <label for="PAN" class="col-2 col-form-label pr-0">PAN:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="PAN" value="7824464731112340">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="PIN" class="col-2 col-form-label pr-0">PIN:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="PIN" value="1234">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="PPK" class="col-2 col-form-label pr-0">PPK:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="PPK" value="11111111111111111111111111111111">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="PBF" class="col-2 col-form-label pr-0">PIN Block Format:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="mode" id="ISO0" checked>ISO0
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="ISO1">ISO1
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="ISO2">ISO2
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="ISO3">ISO3
+                                    </label>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-1 col-form-label">
+                                <button type="submit" class="btn btn-primary" id="calc">Calculate PIN Blocks</button>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="cPB" class="col-2 col-form-label pr-0">Clear PIN Block:</label>
+                            <div class="col pl-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-uppercase" id="cPB">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="ePB" class="col-2 col-form-label pr-0">Encrypted PIN Block:</label>
+                            <div class="col pl-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-uppercase" id="ePB">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{template "error.html"}}
+        {{template "scripts.html"}}
+        <script defer>
+            $(document).ready(function() {
+                $("#calc").click(function () {
+                    var obj = {"PAN":document.getElementById("PAN").value,
+                               "PIN":document.getElementById("PIN").value,
+                               "PPK":document.getElementById("PPK").value,
+                               "PBF":"ISO0"};
+
+                    if (document.getElementById("ISO1").checked) {
+                        obj.PBF = "ISO1";
+                    } else if (document.getElementById("ISO2").checked) {
+                        obj.PBF = "ISO2";
+                    } else if (document.getElementById("ISO3").checked) {
+                        obj.PBF = "ISO3";
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/pinblock",
+                        data: JSON.stringify(obj),
+                        dataType: "json"
+                    }).done(function(data) {
+                        var PINBlocks = JSON.parse(data.Res);
+
+                        document.getElementById("cPB").value = PINBlocks.ClearPINBlock;
+                        document.getElementById("ePB").value = PINBlocks.EncryptedPINBlock;
+                    }).fail(function (data) {
+                        document.getElementById("cPB").value = "";
+                        document.getElementById("ePB").value = "";
+                        document.getElementById("errorDescription").innerText = data.responseJSON.Err;
+                        $('#errorModal').modal('show');
+                    });
+
+                    return false;
+                });
+            });
+        </script>
+    </body>
+</html>
