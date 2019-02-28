@@ -105,6 +105,8 @@ func serve(w http.ResponseWriter, r *http.Request) {
 			op = &fincrypt.PVVOperation{}
 		} else if url == "/retailmac" {
 			op = &fincrypt.RetailMACOperation{}
+		} else if url == "/rsa" {
+			op = &fincrypt.RSAOperation{}
 		} else if url == "/tagsearch" {
 			op = &fincrypt.BERTLVTag{}
 		} else if url == "/xor" {
