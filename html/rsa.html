@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>fincrypt.io: RSA</title>
+        {{template "links.html"}}
+    </head>
+    <body>
+        {{template "navbar.html"}}
+        <div class="container-fluid">
+            <div class="row justify-content-lg-center p-2">
+                {{template "sidebar.html"}}
+                <div class="col col-lg-6 border border-dark rounded">
+                    <p class="pt-2">This tool implements the RSA cipher using <a href="https://en.wikipedia.org/wiki/Optimal_asymmetric_encryption_padding" target="_blank">OAEP</a>.</p>
+                    <br>
+                    <form>
+                        <div class="row form-group">
+                            <label for="input" class="col-2 col-form-label pr-0">Input:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="input" value="736E64207265696E666F7263656D656E74732C20776527726520676F696E6720746F20616476616E6365">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="publicexp" class="col-2 col-form-label pr-0">Public Exponent:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="publicexp" value="010001">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="privateexp" class="col-2 col-form-label pr-0">Private Exponent:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="privateexp" value="526BFCEE31E859D15EA8C48F0364E1B0BD8A0C2FB8AE7BB22792E705AAC863562D6850C6B1BAF20B24148F62BCA521413E623299CD7D8C3DC9A7C80A0A97AE2AB20379F749A62BA9E2FEB89C1BE9C5FAE2C728A4CDE4BD5C1CF52A6485CEC52970BB11913801C3B5E351BAC870A96A09F3DA205374033F8B43A1E9AE337495E1">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="modulus" class="col-2 col-form-label pr-0">Modulus:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="modulus" value="AEFB4488970CE282229D8EB7CD58B1507BE28EE23C63E1D1C0C8BDCFAF2DAD8EA8DCE7FE07CF120344B645AFECB1730A986275F5165E630B4F82187660937C77F1F91007EA81C56DD08F7CB907BBDEBB57A3DC54F5D30C7C0E4AC39DF39B8D3D5A87A8A126CDE771DD9046AA48FD6EC4D7C4813BC9D74BD4DD853445F56BCB87">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="label" class="col-2 col-form-label pr-0">Label:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="label" value="">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="hash" class="col-2 col-form-label pr-0">Hash Mode:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="SHA-1">SHA-1
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="SHA-224">SHA-224
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="mode" id="SHA-256" checked>SHA-256
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="SHA-384">SHA-384
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="mode" id="SHA-512">SHA-512
+                                    </label>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="direction" class="col-2 col-form-label pr-0">Direction:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="direction" id="enc" checked>Encrypt
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="direction" id="dec">Decrypt
+                                    </label>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-1 col-form-label">
+                                <button type="submit" class="btn btn-primary" id="calc">Calculate RSA</button>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="result" class="col-2 col-form-label pr-0">Result:</label>
+                            <div class="col pl-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-uppercase" id="result">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" type="button" id="copyButton">
+                                            <a class="fa fa-copy"></a>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{template "error.html"}}
+        {{template "scripts.html"}}
+        <script defer>
+            $(document).ready(function() {
+                $("#calc").click(function () {
+                    var obj = {"Input":document.getElementById("input").value,
+                               "PublicExponent":document.getElementById("publicexp").value,
+                               "PrivateExponent":document.getElementById("privateexp").value,
+                               "Modulus":document.getElementById("modulus").value,
+                               "Label":document.getElementById("label").value,
+                               "HashMode":"SHA-256",
+                               "Direction":0};
+
+                    if (document.getElementById("SHA-1").checked) {
+                        obj.HashMode = "SHA-1";
+                    } else if (document.getElementById("SHA-224").checked) {
+                        obj.HashMode = "SHA-224";
+                    } else if (document.getElementById("SHA-384").checked) {
+                        obj.HashMode = "SHA-384";
+                    } else if (document.getElementById("SHA-512").checked) {
+                        obj.HashMode = "SHA-512";
+                    }
+
+                    if (document.getElementById("dec").checked) {
+                        obj.Direction = 1;
+                    }
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/rsa",
+                        data: JSON.stringify(obj),
+                        dataType: "json"
+                    }).done(function(data) {
+                        document.getElementById("result").value = data.Res;
+                    }).fail(function (data) {
+                        document.getElementById("result").value = "";
+                        document.getElementById("errorDescription").innerText = data.responseJSON.Err;
+                        $('#errorModal').modal('show');
+                    });
+
+                    return false;
+                });
+            });
+        </script>
+    </body>
+</html>
