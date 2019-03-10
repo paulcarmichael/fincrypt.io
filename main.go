@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"flag"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -11,6 +12,7 @@ import (
 	"path/filepath"
 
 	"github.com/paulcarmichael/fincrypt"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 type operationResponse struct {
@@ -206,20 +208,56 @@ func main() {
 
 	defer logFile.Close()
 	log.SetOutput(logFile)
-	log.Println("fincrypt.io starting...")
 
-	// register the handler functions
-	http.HandleFunc("/", serve)
-	http.HandleFunc("/style.css", fileHandler)
-	http.HandleFunc("/favicon.ico", fileHandler)
-	http.HandleFunc("/scripts/", fileHandler)
+	// check for the production flag
+	productionFlag := flag.Bool("production", false, "Starts the http server with HTTPS")
+	flag.Parse()
 
-	log.Println("fincrypt.io started...")
+	if *productionFlag == true {
+		log.Println("fincrypt.io starting in production mode...")
 
-	// serve up some web pages
-	err = http.ListenAndServe(":80", nil)
+		mux := http.NewServeMux()
+		mux.HandleFunc("/", serve)
+		mux.HandleFunc("/style.css", fileHandler)
+		mux.HandleFunc("/favicon.ico", fileHandler)
+		mux.HandleFunc("/scripts/", fileHandler)
 
-	if err != nil {
-		log.Fatal("ListenAndServe: ", err)
+		cm := autocert.Manager{
+			Prompt:     autocert.AcceptTOS,
+			Cache:      autocert.DirCache("certs"),
+			HostPolicy: autocert.HostWhitelist("www.fincrypt.io"),
+		}
+
+		server := http.Server{
+			Addr:      ":443",
+			Handler:   mux,
+			TLSConfig: cm.TLSConfig(),
+		}
+
+		// listening with http only on port 80 allows autocert to handle
+		// http-01 challenges and the parameter acts as a http to https
+		// redirect for other traffic
+		go http.ListenAndServe(":80", cm.HTTPHandler(nil))
+
+		err = server.ListenAndServeTLS("", "")
+
+		if err != nil {
+			log.Fatal("ListenAndServeTLS: ", err)
+		}
+	} else {
+		log.Println("fincrypt.io starting...")
+
+		// register the handler functions
+		http.HandleFunc("/", serve)
+		http.HandleFunc("/style.css", fileHandler)
+		http.HandleFunc("/favicon.ico", fileHandler)
+		http.HandleFunc("/scripts/", fileHandler)
+
+		// serve up some cryptography
+		err = http.ListenAndServe(":80", nil)
+
+		if err != nil {
+			log.Fatal("ListenAndServe: ", err)
+		}
 	}
 }

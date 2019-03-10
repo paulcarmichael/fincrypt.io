@@ -8,6 +8,6 @@ COPY . /go/src/github.com/paulcarmichael/fincrypt.io
 RUN go get -d -v /go/src/github.com/paulcarmichael/fincrypt.io
 RUN go install -v /go/src/github.com/paulcarmichael/fincrypt.io
 
-ENTRYPOINT /go/bin/fincrypt.io
+ENTRYPOINT ["/go/bin/fincrypt.io"]
 
-EXPOSE 80
+EXPOSE 80 443
