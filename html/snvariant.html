@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>fincrypt.io: SafeNet Key Variants</title>
+        {{template "links.html"}}
+    </head>
+    <body>
+        {{template "navbar.html"}}
+        <div class="container-fluid">
+            <div class="row justify-content-lg-center p-2">
+                {{template "sidebar.html"}}
+                <div class="col col-lg-6 border border-dark rounded">
+                    <p class="pt-2">This tool uses a Master Key and a SafeNet Key Variant to calculate a clear key from an encrypted key, or an encrypted key from a clear key.</p>
+                    <br>
+                    <form>
+                        <div class="row form-group">
+                            <label for="MK" class="col-2 col-form-label pr-0">MK:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="MK" value="0123456789ABCDEFFEDCBA9876543210">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="var" class="col-2 col-form-label pr-0">Variant:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="var" id="DPK" checked>DPK
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="var" id="PPK">PPK
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="var" id="IMK-AC">IMK-AC
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="var" id="IMK-CVC">IMK-CVC
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="var" id="IMK-SMI">IMK-SMI
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="var" id="IMK-SMC">IMK-SMC
+                                    </label>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="key" class="col-2 col-form-label pr-0">Key:</label>
+                            <div class="col pl-0">
+                                <input type="text" class="form-control text-uppercase" id="key" value="5EB3BCFB75C7923E388CBF6DC4525D86">
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="direction" class="col-2 col-form-label pr-0">Direction:</label>
+                            <div class="col pl-0">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-secondary shadow-none active">
+                                        <input type="radio" name="direction" id="enc" checked>Encrypt
+                                    </label>
+                                    <label class="btn btn-secondary shadow-none">
+                                        <input type="radio" name="direction" id="dec">Decrypt
+                                    </label>
+                                </div> 
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-1 col-form-label">
+                                <button type="submit" class="btn btn-primary" id="calc">Calculate Key</button>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <label for="result" class="col-2 col-form-label pr-0">Result:</label>
+                            <div class="col pl-0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control text-uppercase" id="result">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" type="button" id="copyButton">
+                                            <a class="fa fa-copy"></a>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {{template "error.html"}}
+        {{template "scripts.html"}}
+        <script defer>
+            $(document).ready(function() {
+                $("#calc").click(function () {
+                    var obj = {"MK":document.getElementById("MK").value,
+                               "Variant":"00",
+                               "Key":document.getElementById("key").value,
+                               "Direction":0};
+
+                    if (document.getElementById("dec").checked) {
+                        obj.Direction = 1;
+                    }
+
+                    if (document.getElementById("PPK").checked) {
+                        obj.Variant = "28";
+                    } else if (document.getElementById("IMK-AC").checked) {
+                        obj.Variant = "30";
+                    } else if (document.getElementById("IMK-SMI").checked) {
+                        obj.Variant = "36";
+                    } else if (document.getElementById("IMK-SMC").checked) {
+                        obj.Variant = "3A";
+                    } else if (document.getElementById("IMK-CVC").checked) {
+                        obj.Variant = "7E";
+                    } 
+                    $.ajax({
+                        type: "POST",
+                        url: "/snvariant",
+                        data: JSON.stringify(obj),
+                        dataType: "json"
+                    }).done(function(data) {
+                        document.getElementById("result").value = data.Res;
+                    }).fail(function (data) {
+                        document.getElementById("result").value = "";
+                        document.getElementById("errorDescription").innerText = data.responseJSON.Err;
+                        $('#errorModal').modal('show');
+                    });
+
+                    return false;
+                });
+            });
+        </script>
+    </body>
+</html>
